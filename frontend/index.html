@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Notes App</title>
+</head>
+<body>
+
+<h2>AI Smart Notes</h2>
+
+<textarea id="note" placeholder="Write your note..."></textarea><br>
+<button onclick="addNote()">Add Note</button>
+
+<h3>Notes</h3>
+<div id="notes"></div>
+
+<script>
+const API = "http://127.0.0.1:8000";
+
+async function addNote() {
+  const content = document.getElementById("note").value;
+
+  await fetch(${API}/notes/, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ content })
+  });
+
+  loadNotes();
+}
+
+async function loadNotes() {
+  const res = await fetch(${API}/notes/);
+  const data = await res.json();
+
+  const div = document.getElementById("notes");
+  div.innerHTML = "";
+
+  data.forEach(n => {
+    div.innerHTML += 
+      <p><b>Note:</b> ${n.content}</p>
+      <p><b>Summary:</b> ${n.summary}</p>
+      <button onclick="deleteNote(${n.id})">Delete</button>
+      <hr>
+    ;
+  });
+}
+
+async function deleteNote(id) {
+  await fetch(${API}/notes/${id}, { method: "DELETE" });
+  loadNotes();
+}
+
+loadNotes();
+</script>
+
+</body>
+</html>
